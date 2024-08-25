@@ -1,7 +1,8 @@
+//Importaciones
 import { useEffect } from "react";
 
 import { StyleSheet, Text, Pressable, Button } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { interpolateColor } from "react-native-reanimated";
 import {
   useSharedValue,
   withTiming,
@@ -9,26 +10,41 @@ import {
 } from "react-native-reanimated";
 
 export default function HomeScreen() {
+  //Se crean variables para el deslizamiento, el fondo y su opacidad
   const slide = useSharedValue(-1000);
-  const fade = useSharedValue(0);
+  const background = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
+  //Se utiliza useEffect para el manejo de estadpos de los componentes
   useEffect(() => {
     slide.value = withTiming(0, { duration: 2500 });
-    fade.value = withTiming(1, { duration: 2500 });
+    background.value = withTiming(1, { duration: 1000 });
   });
 
+  //Estilos animados
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: slide.value }],
+    opacity: opacity.value,
   }));
 
+  //Fondo con transición
+  const backgroundStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      background.value,
+      [0, 1],
+      ["#a7bb80", "#326355"]
+    ),
+  }));
+
+  //Función para manejar el evento de presionar el botón
   const handlePress = () => {
-    fade.value = withTiming(fade.value === 0 ? 1 : 0, { duration: 500 });
+    background.value = withTiming(background.value === 0 ? 1 : 0, {
+      duration: 500,
+    });
+    opacity.value = withTiming(opacity.value === 1 ? 0 : 1, { duration: 500 });
   };
 
-  const backgroundStyle = useAnimatedStyle(() => ({
-    backgroundColor: fade.value === 0 ? "red" : "blue",
-  }));
-
+  //Retorno de la vista
   return (
     <>
       <Animated.View style={[styles.backgorund, backgroundStyle]}>
@@ -45,6 +61,7 @@ export default function HomeScreen() {
   );
 }
 
+//Estilos
 const styles = StyleSheet.create({
   backgorund: {
     flex: 1,
