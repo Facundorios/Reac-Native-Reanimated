@@ -1,32 +1,51 @@
-import { StyleSheet, Button } from "react-native";
+import { useEffect } from "react";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { StyleSheet, Text, Pressable, Button } from "react-native";
+import Animated from "react-native-reanimated";
+import {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 export default function HomeScreen() {
+  const slide = useSharedValue(-2050);
+
+  useEffect(() => {
+    slide.value = withTiming(0, { duration: 2500 });
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: slide.value }],
+  }));
+
   return (
     <>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">
-          Este proyecto esta utilizando react-native-reanimated
-        </ThemedText>
-
-        <ThemedView>
-          <Button title="Ver código" onPress={() => {}} />
-        </ThemedView>
-      </ThemedView>
+      <Animated.View>
+        <Animated.View style={animatedStyle}>
+          <Text style={[styles.components, animatedStyle]}>
+            Este Proyecto contiene React-Native-Reanimated
+          </Text>
+        </Animated.View>
+        <Pressable style={styles.button}>
+          <Button title="Iniciar" />
+        </Pressable>
+      </Animated.View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  components: {
     alignItems: "center",
-    flex: 1,
+    fontSize: 26,
+    fontWeight: "bold",
+    textAlign: "center",
     justifyContent: "center",
+    padding: 250,
   },
-
-  startButton: {
-    marginTop: 20,
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
